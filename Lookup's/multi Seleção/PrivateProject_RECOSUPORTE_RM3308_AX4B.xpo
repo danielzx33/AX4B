@@ -1,0 +1,118 @@
+﻿Exportfile for AOT version 1.0 or later
+Formatversion: 1
+
+***Element: JOB
+
+; Microsoft Dynamics AX Job: inventItemGroupItemUpdate descarregado
+; --------------------------------------------------------------------------------
+  JOBVERSION 1
+  
+  SOURCE #inventItemGroupItemUpdate
+    #//<AX4B> RECOSUPORTE_RM3308_AX4B
+    #public void inventItemGroupItemUpdate()
+    #{
+    #     SysExcelApplication application;
+    #     SysExcelWorkbooks workbooks;
+    #     SysExcelWorkbook workbook;
+    #     SysExcelWorksheets worksheets;
+    #     SysExcelWorksheet worksheet;
+    #     SysExcelCells cells;
+    #     COMVariantType  type;
+    #     int row =1;
+    #
+    #     InventItemGroupItem     inventItemGroupItem;
+    #     ItemId                  itemid;
+    #     ItemGroupId             itemGroupIdOld, itemGroupIdNew;
+    #
+    #     Dialog dialog;
+    #     DialogField dialogField;
+    #     FileName filename;
+    #     ;
+    #
+    #     application = SysExcelApplication::construct();
+    #     workbooks = application.workbooks();
+    #     dialog = new Dialog("FileOpen");
+    #     dialogfield = dialog.addField(extendedTypeStr(FilenameOpen));
+    #     dialog.run();
+    #
+    #     if (dialog.run())
+    #     {
+    #        filename = (dialogfield.value());
+    #     }
+    #     try
+    #     {
+    #     workbooks.open(filename);
+    #     }
+    #     catch (Exception::Error)
+    #     {
+    #     throw error("@VAR48");
+    #     }
+    #     workbook = workbooks.item(1);
+    #     worksheets = workbook.worksheets();
+    #     worksheet = worksheets.itemFromNum(1);
+    #     cells = worksheet.cells();
+    #
+    #     do{
+    #         ttsBegin;
+    #         row++;
+    #         itemid = cells.item(row,1).value().bStr();
+    #         itemGroupIdOld = cells.item(row,3).value().bStr();
+    #         itemGroupIdNew = cells.item(row,4).value().bStr();
+    #
+    #         if(inventItemGroup::find(itemGroupIdNew))
+    #         {
+    #             while select forUpdate inventItemGroupItem
+    #                where inventItemGroupItem.ItemId == itemid
+    #                 &&   InventItemGroupItem.ItemGroupId == itemGroupIdOld
+    #                 &&   (inventItemGroupItem.ItemDataAreaId == "npl2" || inventItemGroupItem.ItemDataAreaId == "npl"
+    #                        || inventItemGroupItem.ItemDataAreaId == "ire" || inventItemGroupItem.ItemDataAreaId == "ren")
+    #                 {
+    #                    inventItemGroupItem.ItemGroupId = itemGroupIdNew;
+    #                    inventItemGroupItem.update();
+    #                 }
+    #         }
+    #         else
+    #         {
+    #              warning(strFmt("@VAR47",int2str(row), extendedTypeStr(ItemGroupId)));
+    #         }
+    #         ttsCommit;
+    #         type = cells.item(row+1, 1).value().variantType();
+    #      }while (type != COMVariantType::VT_EMPTY);
+    #    info("Processo concluído");
+    #
+    #         application.quit();
+    #}
+    #//</AX4B>
+    #
+    #
+  ENDSOURCE
+  PROPERTIES
+    Origin              #{9DDC64F6-C330-478B-8402-6895DE1EBAD4}
+  ENDPROPERTIES
+  
+
+***Element: PRN
+
+; Microsoft Dynamics AX Project : RECOSUPORTE_RM3308_AX4B unloaded
+; --------------------------------------------------------------------------------
+  PROJECTVERSION 2
+  
+  PROJECT #RECOSUPORTE_RM3308_AX4B
+  PRIVATE
+  PROPERTIES
+    Name                #RECOSUPORTE_RM3308_AX4B
+    Origin              #{4FE87D6C-83E0-4A7F-B301-E6ADD282CE9A}
+  ENDPROPERTIES
+  
+    PROJECTCLASS ProjectNode
+    BEGINNODE
+      FILETYPE 0
+      UTILTYPE 5
+      UTILOBJECTID 0
+      NODETYPE 215
+      NAME #inventItemGroupItemUpdate
+    ENDNODE
+  ENDPROJECT
+  
+
+***Element: END
